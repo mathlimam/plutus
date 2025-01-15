@@ -6,10 +6,10 @@ public record OperationDTO (String operationType,
                             LocalDateTime createdAt,
                             LocalDateTime updatedAt,
                             String statusType,
-                            String originSellerId,
-                            String destinationSellerId,
+                            String originSellerCpf,
+                            String destinationSellerCpf,
                             Long originStoreId,
                             Long destinationStoreId,
-                            String productId,
+                            String productBarcode,
                             int quantity) {
 }
