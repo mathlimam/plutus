@@ -24,8 +24,8 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Optional<ProductEntity> findByBarcode(String id) {
-        return productRepository.findByBarcode(id);
+    public ProductEntity findByBarcode(String id) {
+        return productRepository.findByBarcode(id).orElseThrow(()-> new RuntimeException("Product not found"));
     }
 
 }
