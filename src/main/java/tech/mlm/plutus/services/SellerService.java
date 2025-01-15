@@ -20,15 +20,11 @@ public class SellerService {
         return repository.save(entity);
     }
 
-    public Optional<SellerEntity> findById(Long id) {
-        return repository.findById(id);
-    }
-
     public List<SellerEntity> findAll() {
         return repository.findAll();
     }
 
-    public Optional<SellerEntity> findByCpf(String cpf) {
-        return repository.findByCpf(cpf);
+    public SellerEntity findByCpf(String cpf) {
+        return repository.findByCpf(cpf).orElseThrow(() -> new IllegalArgumentException("Seller with cpf " + cpf + " not found"));
     }
 }
