@@ -14,6 +14,7 @@ public class OperationEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private OperationType type;
 
     private LocalDateTime createdAt;
@@ -21,12 +22,14 @@ public class OperationEntity {
     private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private StatusType status;
 
+    @Column(nullable = true)
     private String invoiceNumber;
 
     @ManyToOne
-    @JoinColumn(name = "concluded_by_seller_id")
+    @JoinColumn(name = "concluded_by_seller_id", nullable = true)
     private SellerEntity concludedBy;
 
     @ManyToOne
@@ -49,6 +52,7 @@ public class OperationEntity {
     @JoinColumn(name = "product_entity_id", nullable = false)
     private ProductEntity productEntity;
 
+    @Column(nullable = false)
     private int quantity;
 
     public OperationEntity() {}
@@ -66,7 +70,6 @@ public class OperationEntity {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = null;
         this.invoiceNumber = null;
-
     }
 
     public Long getId() {
@@ -85,8 +88,16 @@ public class OperationEntity {
         return createdAt;
     }
 
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public StatusType getStatus() {

@@ -1,6 +1,7 @@
 package tech.mlm.plutus.entities;
 
 import jakarta.persistence.*;
+import jdk.dynalink.Operation;
 import org.apache.catalina.Store;
 
 import java.util.ArrayList;
@@ -12,10 +13,11 @@ public class StoreEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String name;
 
     @OneToMany
-    private List<SellerEntity> sellers = new ArrayList<>();
+    private final List<SellerEntity> sellers = new ArrayList<>();
 
     public StoreEntity() {}
 

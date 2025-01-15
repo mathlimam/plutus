@@ -5,14 +5,15 @@ import jakarta.persistence.*;
 @Entity
 public class SellerEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private String cpf;
 
+    @Column(nullable = false)
     private String name;
 
     public SellerEntity() {}
 
-    public SellerEntity(String name, StoreEntity store) {
+    public SellerEntity(String cpf, String name) {
+        this.cpf = cpf;
         this.name = name;
     }
 
@@ -24,4 +25,11 @@ public class SellerEntity {
         this.name = name;
     }
 
+    public String getCpf(){
+        return this.cpf;
+    }
+
+    public void setCpf(String cpf){
+        this.cpf = cpf;
+    }
 }
