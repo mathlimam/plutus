@@ -7,23 +7,26 @@ import tech.mlm.plutus.types.StatusType;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name="operations_table")
 public class OperationEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OperationType type;
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusType status;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
     @Column(nullable = true)
     private String invoiceNumber;
@@ -84,6 +87,15 @@ public class OperationEntity {
         this.type = type;
     }
 
+    public StatusType getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusType status) {
+        this.status = status;
+        this.updatedAt = LocalDateTime.now();
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -100,14 +112,6 @@ public class OperationEntity {
         this.updatedAt = updatedAt;
     }
 
-    public StatusType getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusType status) {
-        this.status = status;
-        this.updatedAt = LocalDateTime.now();
-    }
 
     public String getInvoiceNumber() {
         return invoiceNumber;
@@ -123,6 +127,7 @@ public class OperationEntity {
 
     public void setConcludedBy(SellerEntity concludedBy) {
         this.concludedBy = concludedBy;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public StoreEntity getOriginStore() {
