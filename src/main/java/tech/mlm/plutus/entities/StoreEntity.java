@@ -1,8 +1,6 @@
 package tech.mlm.plutus.entities;
 
 import jakarta.persistence.*;
-import jdk.dynalink.Operation;
-import org.apache.catalina.Store;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +23,16 @@ public class StoreEntity {
         this.name = name;
     }
 
-    public String getname () {
+    public String getName () {
         return name;
     }
 
-    public void setname (String name) {
+    public void setName (String name) {
         this.name = name;
+    }
+
+    public Long getId () {
+        return id;
     }
 
     public List<SellerEntity> getSellers () {

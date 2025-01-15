@@ -25,6 +25,10 @@ public class ProductEntity {
         this.name = name;
     }
 
+    public String getBarcode(){
+        return barcode;
+    }
+
 }
 
 
