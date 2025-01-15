@@ -1,3 +1,3 @@
 package tech.mlm.plutus.dtos;
 
-public record SellerDTO(Long id, String name) {}
+public record SellerDTO(String cpf, String name) {}
