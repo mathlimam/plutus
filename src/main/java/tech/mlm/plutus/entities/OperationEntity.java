@@ -7,33 +7,19 @@ import tech.mlm.plutus.types.StatusType;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="operations_table")
 public class OperationEntity {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private OperationType type;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private StatusType status;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
-    @Column(nullable = true)
-    private String invoiceNumber;
+    private StatusType status = StatusType.PENDING;
 
     @ManyToOne
-    @JoinColumn(name = "concluded_by_seller_id", nullable = true)
-    private SellerEntity concludedBy;
+    private ProductEntity productEntity;
 
     @ManyToOne
     @JoinColumn(name = "origin_store_id", nullable = false)
@@ -51,32 +37,37 @@ public class OperationEntity {
     @JoinColumn(name = "destination_seller_id", nullable = false)
     private SellerEntity destinationSeller;
 
-    @ManyToOne
-    @JoinColumn(name = "product_entity_id", nullable = false)
-    private ProductEntity productEntity;
-
-    @Column(nullable = false)
     private int quantity;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt;
+
+    private String invoiceNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "sconcludedBy_seller_id")
+    private SellerEntity concludedBy;
 
     public OperationEntity() {}
 
     public OperationEntity(OperationType type, ProductEntity productEntity, StoreEntity originStore, StoreEntity destinationStore,
                            SellerEntity originSeller, SellerEntity destinationSeller, int quantity) {
         this.type = type;
-        this.status = StatusType.PENDING;
         this.productEntity = productEntity;
         this.originStore = originStore;
         this.destinationStore = destinationStore;
         this.originSeller = originSeller;
         this.destinationSeller = destinationSeller;
         this.quantity = quantity;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = null;
-        this.invoiceNumber = null;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public OperationType getType() {
@@ -93,7 +84,7 @@ public class OperationEntity {
 
     public void setStatus(StatusType status) {
         this.status = status;
-        this.updatedAt = LocalDateTime.now();
+        setUpdatedAt(LocalDateTime.now());
     }
 
     public LocalDateTime getCreatedAt() {
@@ -108,10 +99,9 @@ public class OperationEntity {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    private void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
 
     public String getInvoiceNumber() {
         return invoiceNumber;
@@ -127,7 +117,7 @@ public class OperationEntity {
 
     public void setConcludedBy(SellerEntity concludedBy) {
         this.concludedBy = concludedBy;
-        this.updatedAt = LocalDateTime.now();
+        setUpdatedAt(LocalDateTime.now());
     }
 
     public StoreEntity getOriginStore() {
