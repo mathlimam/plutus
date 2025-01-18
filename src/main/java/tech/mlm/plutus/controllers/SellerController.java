@@ -23,7 +23,7 @@ public class SellerController {
     @PostMapping("/createseller")
     public ResponseEntity<?> createSeller(@RequestBody SellerDTO sellerDTO) {
         try {
-            SellerEntity seller = new SellerEntity(sellerDTO.cpf(), sellerDTO.name());
+            SellerEntity seller = new SellerEntity(sellerDTO.name());
             sellerService.save(seller);
             return ResponseEntity.ok(seller);
         } catch (RuntimeException e) {
