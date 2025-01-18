@@ -29,7 +29,7 @@ public class OperationService {
         this.storeService = storeService;
     }
 
-    public Optional<OperationEntity> createOperation(OperationType operationType,
+    public OperationEntity createOperation(OperationType operationType,
                                                      ProductEntity productEntity,
                                                      int quantity,
                                                      StoreEntity originStore,
@@ -38,45 +38,60 @@ public class OperationService {
                                                      SellerEntity destinationSeller) {
 
         OperationEntity operationEntity = new OperationEntity(operationType, productEntity, originStore, destinationStore, originSeller, destinationSeller, quantity);
-        operationRepository.saveAndFlush(operationEntity);
 
-        return Optional.of(operationEntity);
+        operationRepository.save(operationEntity);
+
+        return operationEntity;
     }
 
     public Optional<OperationEntity> save(OperationEntity operationEntity) {
-        operationRepository.saveAndFlush(operationEntity);
+        operationRepository.save(operationEntity);
         return Optional.of(operationEntity);
     }
 
     public OperationEntity createOperationEntity(OperationDTO dto) {
         try {
             validateEntities(dto);
+            OperationEntity entity = new OperationEntity(OperationType.valueOf(dto.operationType()),
+                    productService.findByBarcode(dto.productBarcode()),
+                    storeService.findById(dto.originStoreId()),
+                    storeService.findById(dto.destinationStoreId()),
+                    sellerService.findById(dto.originSellerId()),
+                    sellerService.findById(dto.destinationSellerId()),
+                    dto.quantity());
 
-            return new OperationEntity(OperationType.valueOf(dto.operationType()),
-                                        productService.findByBarcode(dto.productBarcode()),
-                                        storeService.findById(dto.originStoreId()),
-                                        storeService.findById(dto.destinationStoreId()),
-                                        sellerService.findByCpf(dto.originSellerCpf()),
-                                        sellerService.findByCpf(dto.destinationSellerCpf()),
-                                        dto.quantity());
+            operationRepository.save(entity);
+            return entity;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+
     private void validateEntities(OperationDTO dto){
         validateOperationType(dto.operationType());
-        validateSeller(dto.originSellerCpf());
-        validateSeller(dto.destinationSellerCpf());
+        validateSeller(dto.originSellerId());
         validateStore(dto.originStoreId());
+        validateSellerStore(dto.originSellerId(), dto.originStoreId());
+
+        validateSeller(dto.destinationSellerId());
         validateStore(dto.destinationStoreId());
+        validateSellerStore(dto.destinationSellerId(), dto.destinationStoreId());
+
         validateProduct(dto.productBarcode());
         validateQuantity(dto.quantity());
     }
 
-    private void validateSeller(String cpf){
+    private void validateSellerStore(Long sellerId, Long StoreId){
+        if(storeService.findById(StoreId).getSellers().stream().noneMatch(seller -> seller.getId().equals(sellerId))){
+            throw new IllegalArgumentException("Seller are not from the store");
+        }
+    }
+
+    private void validateSeller(Long id){
         try{
-            sellerService.findByCpf(cpf);
+            sellerService.findById(id);
+
 
         }catch (Exception e){
             throw new RuntimeException(e);
@@ -94,6 +109,7 @@ public class OperationService {
 
     private void validateProduct(String barcode){
         try {
+            System.out.println(barcode);
             productService.findByBarcode(barcode);
 
         } catch(Exception e){
