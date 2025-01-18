@@ -3,7 +3,9 @@ package tech.mlm.plutus.entities;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class StoreEntity {
@@ -15,7 +17,7 @@ public class StoreEntity {
     private String name;
 
     @OneToMany
-    private final List<SellerEntity> sellers = new ArrayList<>();
+    private Set<SellerEntity> sellers = new HashSet<>();
 
     public StoreEntity() {}
 
@@ -35,7 +37,7 @@ public class StoreEntity {
         return id;
     }
 
-    public List<SellerEntity> getSellers () {
+    public Set<SellerEntity> getSellers () {
         return sellers;
     }
 

@@ -9,9 +9,6 @@ import org.springframework.context.annotation.Bean;
 public class PlutusApplication {
 
 	public static void main(String[] args) {
-
 		SpringApplication.run(PlutusApplication.class, args);
-
 	}
-
 }

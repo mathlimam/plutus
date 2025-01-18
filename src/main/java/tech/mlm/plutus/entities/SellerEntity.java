@@ -5,31 +5,28 @@ import jakarta.persistence.*;
 @Entity
 public class SellerEntity {
     @Id
-    private String cpf;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     @Column(nullable = false)
     private String name;
 
-    public SellerEntity() {}
+    public SellerEntity() {
+    }
 
-    public SellerEntity(String cpf, String name) {
-        this.cpf = cpf;
+    public SellerEntity(String name) {
         this.name = name;
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getCpf(){
-        return this.cpf;
-    }
-
-    public void setCpf(String cpf){
-        this.cpf = cpf;
+    public Long getId() {
+        return id;
     }
 }

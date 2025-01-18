@@ -24,7 +24,7 @@ public class SellerService {
         return repository.findAll();
     }
 
-    public SellerEntity findByCpf(String cpf) {
-        return repository.findByCpf(cpf).orElseThrow(() -> new IllegalArgumentException("Seller with cpf " + cpf + " not found"));
+    public SellerEntity findById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Seller with id " + id + " not found"));
     }
 }

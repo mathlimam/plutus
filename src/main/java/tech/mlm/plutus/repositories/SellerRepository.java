@@ -5,6 +5,4 @@ import tech.mlm.plutus.entities.SellerEntity;
 
 import java.util.Optional;
 
-public interface SellerRepository extends JpaRepository<SellerEntity, Long> {
-    Optional<SellerEntity> findByCpf(String cpf);
-}
+public interface SellerRepository extends JpaRepository<SellerEntity, Long> {}
