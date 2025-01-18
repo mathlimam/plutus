@@ -30,11 +30,15 @@ public class StoreController {
 
     @PostMapping("/addseller")
     public ResponseEntity<?> addSeller(@RequestBody AddSellerRequestDTO request) {
-        StoreEntity store = storeService.findById(request.storeId()).orElseThrow(() -> new IllegalArgumentException("Store not found"));
-        SellerEntity seller = sellerService.findByCpf(request.sellerId()).orElseThrow(()-> new IllegalArgumentException("Seller not found"));
+        try {
+            StoreEntity store = storeService.findById(request.storeId());
+            SellerEntity seller = sellerService.findById(request.sellerId());
 
-        store.addSeller(seller);
-        return ResponseEntity.ok().body(storeService.save(store));
+            store.addSeller(seller);
+            return ResponseEntity.ok().body(storeService.save(store));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     public ResponseEntity<?> getStores(){
