@@ -2,6 +2,7 @@ package tech.mlm.plutus.services;
 
 import org.springframework.stereotype.Service;
 import tech.mlm.plutus.dtos.OperationDTO;
+import tech.mlm.plutus.dtos.requests.UpdateOperationDTO;
 import tech.mlm.plutus.entities.OperationEntity;
 import tech.mlm.plutus.entities.ProductEntity;
 import tech.mlm.plutus.entities.SellerEntity;
@@ -10,6 +11,7 @@ import tech.mlm.plutus.repositories.OperationRepository;
 import tech.mlm.plutus.types.OperationType;
 import tech.mlm.plutus.types.StatusType;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -59,8 +61,6 @@ public class OperationService {
                     sellerService.findById(dto.originSellerId()),
                     sellerService.findById(dto.destinationSellerId()),
                     dto.quantity());
-
-            operationRepository.save(entity);
             return entity;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -117,29 +117,56 @@ public class OperationService {
         }
     }
 
-    private void validateOperationType(String operationType){
-        if(Arrays.stream(OperationType.values())
-                 .noneMatch(type -> type.name().equals(operationType))) throw new IllegalArgumentException("Operation type not supported");
-    }
-
     private void validateQuantity(int quantity){
         if(quantity <= 0) throw new IllegalArgumentException("Quantity cannot be less or equal to zero");
     }
 
-    public Optional<OperationEntity> setOperationType(Long operationId, OperationType operationType) {
-        OperationEntity operationEntity = getOperationById(operationId);
-        operationEntity.setType(operationType);
-        operationRepository.saveAndFlush(operationEntity);
-
-        return Optional.of(operationEntity);
+    private void validateOperationType(String type){
+        if(Arrays.stream(OperationType.values()).noneMatch(operationType -> operationType.name().equals(type))){
+            throw new IllegalArgumentException("Operation type not supported");
+        }
     }
 
-    public Optional<OperationEntity> setOperationStatus(Long operationId, StatusType status) {
-        OperationEntity operationEntity = getOperationById(operationId);
-        operationEntity.setStatus(status);
-        operationRepository.saveAndFlush(operationEntity);
+    public OperationEntity updateOperation(UpdateOperationDTO request) {
+        if (request == null) throw new IllegalArgumentException("request cannot be null");
 
-        return Optional.of(operationEntity);
+        try {
+            OperationEntity operationEntity = operationRepository.findById(request.operationId()).orElseThrow(() -> new RuntimeException("Operation not found"));
+
+            if (request.operationType() != null) setOperationType(operationEntity, OperationType.valueOf(request.operationType().toUpperCase()));
+            if (request.status() != null) setOperationStatus(operationEntity, StatusType.valueOf(request.status().toUpperCase()));
+            if (request.invoiceNumber() != null) setOperationInvoice(operationEntity, request.invoiceNumber());
+            if (request.quantity() != 0) setQuantity(operationEntity, request.quantity());
+
+            return operationEntity;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void setOperationType(OperationEntity operationEntity, OperationType operationType) {
+        operationEntity.setType(operationType);
+        operationEntity.setUpdatedAt(LocalDateTime.now());
+        operationRepository.save(operationEntity);
+    }
+
+    private void setOperationStatus(OperationEntity operationEntity, StatusType status) {
+        operationEntity.setStatus(status);
+        operationEntity.setUpdatedAt(LocalDateTime.now());
+        operationRepository.save(operationEntity);
+    }
+
+    private void setOperationInvoice(OperationEntity operationEntity, String invoice){
+        operationEntity.setInvoiceNumber(invoice);
+        operationEntity.setUpdatedAt(LocalDateTime.now());
+        operationRepository.save(operationEntity);
+    }
+
+    private void setQuantity(OperationEntity operationEntity, int quantity) {
+        if(quantity > operationEntity.getQuantity()){ throw new IllegalArgumentException("Quantity cannot be greater than operation quantity"); }
+        operationEntity.setQuantity(quantity);
+        operationEntity.setUpdatedAt(LocalDateTime.now());
+        operationRepository.save(operationEntity);
     }
 
     public OperationEntity getOperationById (Long operationId) {
