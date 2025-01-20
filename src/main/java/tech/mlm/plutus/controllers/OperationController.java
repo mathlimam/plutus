@@ -3,17 +3,18 @@ package tech.mlm.plutus.controllers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.mlm.plutus.dtos.OperationDTO;
+import tech.mlm.plutus.dtos.requests.UpdateOperationDTO;
 import tech.mlm.plutus.entities.OperationEntity;
-import tech.mlm.plutus.mappers.OperationMapperOld;
+import tech.mlm.plutus.mappers.OperationMapper;
 import tech.mlm.plutus.services.OperationService;
 
 @RestController
 public class OperationController {
 
     private final OperationService operationService;
-    private final OperationMapperOld operationMapper;
+    private final OperationMapper operationMapper;
 
-    public OperationController(OperationService operationService, OperationMapperOld operationMapper) {
+    public OperationController(OperationService operationService, OperationMapper operationMapper) {
         this.operationService = operationService;
         this.operationMapper = operationMapper;
     }
@@ -22,6 +23,7 @@ public class OperationController {
     public ResponseEntity<?> createOperation(@RequestBody OperationDTO operationDTO) {
         try {
             OperationEntity entity = operationService.createOperationEntity(operationDTO);
+            operationService.save(entity);
             return ResponseEntity.ok().body(entity);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -44,6 +46,15 @@ public class OperationController {
             return ResponseEntity.ok().body(operationService.getOperationById(id));
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping("/operation")
+    public ResponseEntity<?> updateOperation(@RequestBody UpdateOperationDTO request) {
+        try{
+            return ResponseEntity.ok().body(operationService.updateOperation(request));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

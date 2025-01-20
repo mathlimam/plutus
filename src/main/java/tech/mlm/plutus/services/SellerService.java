@@ -5,7 +5,7 @@ import tech.mlm.plutus.entities.SellerEntity;
 import tech.mlm.plutus.repositories.SellerRepository;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class SellerService {
