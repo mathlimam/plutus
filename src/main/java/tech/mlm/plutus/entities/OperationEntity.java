@@ -99,7 +99,7 @@ public class OperationEntity {
         return updatedAt;
     }
 
-    private void setUpdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -170,4 +170,5 @@ public class OperationEntity {
         }
         this.quantity = quantity;
     }
+
 }
