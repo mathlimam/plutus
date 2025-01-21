@@ -1,15 +1,18 @@
 package tech.mlm.plutus.services;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import tech.mlm.plutus.dtos.OperationDTO;
+import tech.mlm.plutus.dtos.OperationEntities;
 import tech.mlm.plutus.dtos.requests.UpdateOperationDTO;
 import tech.mlm.plutus.entities.OperationEntity;
 import tech.mlm.plutus.entities.ProductEntity;
 import tech.mlm.plutus.entities.SellerEntity;
 import tech.mlm.plutus.entities.StoreEntity;
 import tech.mlm.plutus.repositories.OperationRepository;
-import tech.mlm.plutus.types.OperationType;
-import tech.mlm.plutus.types.StatusType;
+import tech.mlm.plutus.utils.OperationValidator;
+import tech.mlm.plutus.utils.types.OperationType;
+import tech.mlm.plutus.utils.types.StatusType;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -23,155 +26,107 @@ public class OperationService {
     private final ProductService productService;
     private final SellerService sellerService;
     private final StoreService storeService;
+    private final OperationValidator operationValidator;
 
-    public OperationService(OperationRepository operationRepository, ProductService productService, SellerService sellerService, StoreService storeService) {
+    public OperationService(OperationRepository operationRepository,
+                            ProductService productService,
+                            SellerService sellerService,
+                            StoreService storeService,
+                            OperationValidator operationValidator
+    ) {
         this.operationRepository = operationRepository;
         this.productService = productService;
         this.sellerService = sellerService;
         this.storeService = storeService;
+        this.operationValidator = operationValidator;
     }
 
     public OperationEntity createOperation(OperationType operationType,
-                                                     ProductEntity productEntity,
-                                                     int quantity,
-                                                     StoreEntity originStore,
-                                                     StoreEntity destinationStore,
-                                                     SellerEntity originSeller,
-                                                     SellerEntity destinationSeller) {
+                                           ProductEntity productEntity,
+                                           int quantity,
+                                           StoreEntity originStore,
+                                           StoreEntity destinationStore,
+                                           SellerEntity originSeller,
+                                           SellerEntity destinationSeller) {
 
-        OperationEntity operationEntity = new OperationEntity(operationType, productEntity, originStore, destinationStore, originSeller, destinationSeller, quantity);
+        OperationEntity operationEntity = new OperationEntity(
+                operationType,
+                productEntity,
+                originStore,
+                destinationStore,
+                originSeller,
+                destinationSeller,
+                quantity
+        );
 
-        operationRepository.save(operationEntity);
-
-        return operationEntity;
+        return operationRepository.save(operationEntity);
     }
 
-    public Optional<OperationEntity> save(OperationEntity operationEntity) {
-        operationRepository.save(operationEntity);
-        return Optional.of(operationEntity);
+    public OperationEntity save(OperationEntity operationEntity) {
+        return operationRepository.save(operationEntity);
     }
 
+    @Transactional
     public OperationEntity createOperationEntity(OperationDTO dto) {
-        try {
-            validateEntities(dto);
-            OperationEntity entity = new OperationEntity(OperationType.valueOf(dto.operationType()),
-                    productService.findByBarcode(dto.productBarcode()),
-                    storeService.findById(dto.originStoreId()),
-                    storeService.findById(dto.destinationStoreId()),
-                    sellerService.findById(dto.originSellerId()),
-                    sellerService.findById(dto.destinationSellerId()),
-                    dto.quantity());
-            return entity;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        operationValidator.validateEntities(dto);
+        OperationEntities entities = loadEntities(dto);
+
+        OperationEntity operationEntity = new OperationEntity(
+                OperationType.valueOf(dto.operationType()),
+                entities.productEntity(),
+                entities.originStore(),
+                entities.destinationStore(),
+                entities.originSeller(),
+                entities.destinationSeller(),
+                dto.quantity()
+        );
+
+        return operationRepository.save(operationEntity);
     }
 
+    private OperationEntities loadEntities(OperationDTO dto) {
+        ProductEntity productEntity = productService.findByBarcode(dto.productBarcode());
+        StoreEntity originStore = storeService.findById(dto.originStoreId());
+        StoreEntity destinationStore = storeService.findById(dto.destinationStoreId());
+        SellerEntity originSeller = sellerService.findById(dto.originSellerId());
+        SellerEntity destinationSeller = sellerService.findById(dto.destinationSellerId());
 
-    private void validateEntities(OperationDTO dto){
-        validateOperationType(dto.operationType());
-        validateSeller(dto.originSellerId());
-        validateStore(dto.originStoreId());
-        validateSellerStore(dto.originSellerId(), dto.originStoreId());
-
-        validateSeller(dto.destinationSellerId());
-        validateStore(dto.destinationStoreId());
-        validateSellerStore(dto.destinationSellerId(), dto.destinationStoreId());
-
-        validateProduct(dto.productBarcode());
-        validateQuantity(dto.quantity());
-    }
-
-    private void validateSellerStore(Long sellerId, Long StoreId){
-        if(storeService.findById(StoreId).getSellers().stream().noneMatch(seller -> seller.getId().equals(sellerId))){
-            throw new IllegalArgumentException("Seller are not from the store");
-        }
-    }
-
-    private void validateSeller(Long id){
-        try{
-            sellerService.findById(id);
-
-
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void validateStore(Long id){
-        try {
-            storeService.findById(id);
-
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void validateProduct(String barcode){
-        try {
-            System.out.println(barcode);
-            productService.findByBarcode(barcode);
-
-        } catch(Exception e){
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void validateQuantity(int quantity){
-        if(quantity <= 0) throw new IllegalArgumentException("Quantity cannot be less or equal to zero");
-    }
-
-    private void validateOperationType(String type){
-        if(Arrays.stream(OperationType.values()).noneMatch(operationType -> operationType.name().equals(type))){
-            throw new IllegalArgumentException("Operation type not supported");
-        }
+        return new OperationEntities(productEntity, originStore, destinationStore, originSeller, destinationSeller);
     }
 
     public OperationEntity updateOperation(UpdateOperationDTO request) {
         if (request == null) throw new IllegalArgumentException("request cannot be null");
 
-        try {
-            OperationEntity operationEntity = operationRepository.findById(request.operationId()).orElseThrow(() -> new RuntimeException("Operation not found"));
+        OperationEntity operationEntity = operationRepository.findById(request.operationId()).orElseThrow(() -> new RuntimeException("Operation not found"));
 
-            if (request.operationType() != null) setOperationType(operationEntity, OperationType.valueOf(request.operationType().toUpperCase()));
-            if (request.status() != null) setOperationStatus(operationEntity, StatusType.valueOf(request.status().toUpperCase()));
-            if (request.invoiceNumber() != null) setOperationInvoice(operationEntity, request.invoiceNumber());
-            if (request.quantity() != 0) setQuantity(operationEntity, request.quantity());
+        if (request.operationType() != null) setOperationType(operationEntity, OperationType.valueOf(request.operationType().toUpperCase()));
+        if (request.status() != null) setOperationStatus(operationEntity, StatusType.valueOf(request.status().toUpperCase()));
+        if (request.invoiceNumber() != null) setOperationInvoice(operationEntity, request.invoiceNumber());
+        if (request.quantity() != 0) setQuantity(operationEntity, request.quantity());
 
-            return operationEntity;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return operationEntity;
     }
 
     private void setOperationType(OperationEntity operationEntity, OperationType operationType) {
-        operationEntity.setType(operationType);
-        operationEntity.setUpdatedAt(LocalDateTime.now());
-        operationRepository.save(operationEntity);
+        operationRepository.save(operationEntity.setOperationType(operationType));
     }
 
     private void setOperationStatus(OperationEntity operationEntity, StatusType status) {
-        operationEntity.setStatus(status);
-        operationEntity.setUpdatedAt(LocalDateTime.now());
-        operationRepository.save(operationEntity);
+        operationRepository.save(operationEntity.setOperationStatus(status));
     }
 
     private void setOperationInvoice(OperationEntity operationEntity, String invoice){
-        operationEntity.setInvoiceNumber(invoice);
-        operationEntity.setUpdatedAt(LocalDateTime.now());
-        operationRepository.save(operationEntity);
+        operationRepository.save(operationEntity.setOperationInvoice(invoice));
     }
 
     private void setQuantity(OperationEntity operationEntity, int quantity) {
-        if(quantity > operationEntity.getQuantity()){ throw new IllegalArgumentException("Quantity cannot be greater than operation quantity"); }
-        operationEntity.setQuantity(quantity);
-        operationEntity.setUpdatedAt(LocalDateTime.now());
-        operationRepository.save(operationEntity);
+        if(quantity > operationEntity.getQuantity()) throw new IllegalArgumentException("Quantity cannot be greater than operation quantity");
+        operationRepository.save(operationEntity.setOperationQuantity(quantity));
     }
 
-    public OperationEntity getOperationById (Long operationId) {
-        Optional<OperationEntity> operationEntityOptional = operationRepository.findById(operationId);
-        return operationEntityOptional.orElseThrow(() -> new RuntimeException("Operation not found"));
+    public OperationEntity getOperationById(Long operationId) {
+        return operationRepository.findById(operationId)
+                .orElseThrow(() -> new RuntimeException("Operation not found"));
     }
 
     public List<OperationEntity> getAllOperations() {
