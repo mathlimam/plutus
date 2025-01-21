@@ -17,6 +17,10 @@ public class StoreService {
         this.repository = repository;
     }
 
+    public boolean existsSellerByIdAndStoreId(Long storeId, Long sellerId) {
+        return repository.existsBySellerAndStoreId(storeId, sellerId);
+    }
+
     public StoreEntity save(StoreEntity store) {
         return repository.save(store);
     }
