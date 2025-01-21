@@ -17,7 +17,7 @@ public class StoreEntity {
     private String name;
 
     @OneToMany
-    private Set<SellerEntity> sellers = new HashSet<>();
+    private final Set<SellerEntity> sellers = new HashSet<>();
 
     public StoreEntity() {}
 
