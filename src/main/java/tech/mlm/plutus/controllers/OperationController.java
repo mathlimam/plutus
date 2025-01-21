@@ -12,24 +12,20 @@ import tech.mlm.plutus.services.OperationService;
 public class OperationController {
 
     private final OperationService operationService;
-    private final OperationMapper operationMapper;
 
-    public OperationController(OperationService operationService, OperationMapper operationMapper) {
+    public OperationController(OperationService operationService) {
         this.operationService = operationService;
-        this.operationMapper = operationMapper;
     }
 
     @PostMapping("/createoperation")
     public ResponseEntity<?> createOperation(@RequestBody OperationDTO operationDTO) {
         try {
             OperationEntity entity = operationService.createOperationEntity(operationDTO);
-            operationService.save(entity);
-            return ResponseEntity.ok().body(entity);
+            return ResponseEntity.ok().body(operationService.save(entity));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
 
     @GetMapping("/operations")
     public ResponseEntity<?> getOperations() {
