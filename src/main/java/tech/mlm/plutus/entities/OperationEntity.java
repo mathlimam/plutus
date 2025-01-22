@@ -1,8 +1,8 @@
 package tech.mlm.plutus.entities;
 
 import jakarta.persistence.*;
-import tech.mlm.plutus.types.OperationType;
-import tech.mlm.plutus.types.StatusType;
+import tech.mlm.plutus.utils.types.OperationType;
+import tech.mlm.plutus.utils.types.StatusType;
 
 import java.time.LocalDateTime;
 
@@ -46,7 +46,7 @@ public class OperationEntity {
     private String invoiceNumber;
 
     @ManyToOne
-    @JoinColumn(name = "sconcludedBy_seller_id")
+    @JoinColumn(name = "isconcludedBy_seller_id")
     private SellerEntity concludedBy;
 
     public OperationEntity() {}
@@ -60,6 +60,30 @@ public class OperationEntity {
         this.originSeller = originSeller;
         this.destinationSeller = destinationSeller;
         this.quantity = quantity;
+    }
+
+    public OperationEntity setOperationType(OperationType operationType) {
+        this.setType(operationType);
+        this.setUpdatedAt(LocalDateTime.now());
+        return this;
+    }
+
+    public OperationEntity setOperationStatus(StatusType status) {
+        this.setStatus(status);
+        this.setUpdatedAt(LocalDateTime.now());
+        return this;
+    }
+
+    public OperationEntity setOperationInvoice(String invoice){
+        this.setInvoiceNumber(invoice);
+        this.setUpdatedAt(LocalDateTime.now());
+        return this;
+    }
+
+    public OperationEntity setOperationQuantity(int quantity) {
+        this.setQuantity(quantity);
+        this.setUpdatedAt(LocalDateTime.now());
+        return this;
     }
 
     public Long getId() {
