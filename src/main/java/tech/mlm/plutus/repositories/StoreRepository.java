@@ -5,7 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import tech.mlm.plutus.entities.StoreEntity;
 
-import java.util.HashSet;
+
+
 
 public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
     @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END " +
