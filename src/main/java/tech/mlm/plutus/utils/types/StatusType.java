@@ -1,4 +1,4 @@
-package tech.mlm.plutus.types;
+package tech.mlm.plutus.utils.types;
 
 public enum StatusType {
     OK, PENDING
