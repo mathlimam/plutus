@@ -2,6 +2,7 @@ package tech.mlm.plutus.entities;
 
 import jakarta.persistence.*;
 
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +19,12 @@ public class StoreEntity {
 
     @OneToMany
     private final Set<SellerEntity> sellers = new HashSet<>();
+
+    @OneToMany(mappedBy="originStore")
+    private final List<OperationEntity> originOperations = new ArrayList<>();
+
+    @OneToMany(mappedBy="destinationStore")
+    private final List<OperationEntity> destinationOperations = new ArrayList<>();
 
     public StoreEntity() {}
 
@@ -40,6 +47,7 @@ public class StoreEntity {
     public Set<SellerEntity> getSellers () {
         return sellers;
     }
+
 
     public void addSeller(SellerEntity seller) {
         sellers.add(seller);
