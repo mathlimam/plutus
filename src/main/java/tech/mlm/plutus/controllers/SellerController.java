@@ -1,39 +1,48 @@
 package tech.mlm.plutus.controllers;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import tech.mlm.plutus.dtos.SellerDTO;
+import org.springframework.web.bind.annotation.*;
+import tech.mlm.plutus.dtos.requests.CreateSellerDTO;
 import tech.mlm.plutus.entities.SellerEntity;
+import tech.mlm.plutus.mappers.SellerMapper;
 import tech.mlm.plutus.services.SellerService;
 
-import java.util.List;
+
 
 @RestController
+@RequestMapping("/sellers")
 public class SellerController {
 
     private final SellerService sellerService;
+    private final SellerMapper sellerMapper;
 
-    public SellerController(SellerService sellerService) {
+    public SellerController(SellerService sellerService, SellerMapper sellerMapper) {
         this.sellerService = sellerService;
+        this.sellerMapper = sellerMapper;
     }
 
-    @PostMapping("/createseller")
-    public ResponseEntity<?> createSeller(@RequestBody SellerDTO sellerDTO) {
+    @PostMapping("/create")
+    public ResponseEntity<?> createSeller(@RequestBody CreateSellerDTO sellerDTO) {
         try {
             SellerEntity seller = new SellerEntity(sellerDTO.name());
-            sellerService.save(seller);
-            return ResponseEntity.ok(seller);
-        } catch (RuntimeException e) {
+            return ResponseEntity.ok().body(sellerMapper.toDTO(sellerService.save(seller)));
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @GetMapping("/getsellers")
-    public ResponseEntity<?> getSellers() {
-        List<SellerEntity> sellers = sellerService.findAll();
-        return ResponseEntity.ok(sellers);
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getSellerById(@PathVariable Long id) {
+        try{
+            SellerEntity seller = sellerService.findById(id);
+            return ResponseEntity.ok().body(sellerMapper.toDTO(seller));
+        } catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("")
+    public ResponseEntity<?> getAllSellers(){
+        return ResponseEntity.ok().body(sellerService.findAll());
     }
 }
