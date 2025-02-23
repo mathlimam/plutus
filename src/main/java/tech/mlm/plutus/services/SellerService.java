@@ -2,6 +2,7 @@ package tech.mlm.plutus.services;
 
 import org.springframework.stereotype.Service;
 import tech.mlm.plutus.entities.SellerEntity;
+import tech.mlm.plutus.exceptions.SellerNotFoundException;
 import tech.mlm.plutus.repositories.SellerRepository;
 
 import java.util.List;
@@ -25,6 +26,6 @@ public class SellerService {
     }
 
     public SellerEntity findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Seller with id " + id + " not found"));
+        return repository.findById(id).orElseThrow(() -> new SellerNotFoundException("Seller with id " + id + " not found"));
     }
 }

@@ -2,6 +2,7 @@ package tech.mlm.plutus.services;
 
 import org.springframework.stereotype.Service;
 import tech.mlm.plutus.entities.ProductEntity;
+import tech.mlm.plutus.exceptions.ProductNotFoundException;
 import tech.mlm.plutus.repositories.ProductRepository;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class ProductService {
     }
 
     public ProductEntity findByBarcode(String id) {
-        return productRepository.findByBarcode(id).orElseThrow(()-> new RuntimeException("Product not found"));
+        return productRepository.findByBarcode(id).orElseThrow(()-> new ProductNotFoundException("Product with id " + id + " not found"));
     }
 
 }
