@@ -60,7 +60,7 @@ public class StoreService {
             seller.setStore(store);
             store.addSeller(seller);
         });
-        return storeMapper.toDTO(repository.save(store);)
+        return storeMapper.toDTO(repository.save(store));
     }
 
     public StoreEntity findById(Long id) {
