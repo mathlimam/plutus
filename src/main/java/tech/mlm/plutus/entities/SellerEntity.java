@@ -2,31 +2,23 @@ package tech.mlm.plutus.entities;
 
 import jakarta.persistence.*;
 
+import lombok.*;
+
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class SellerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name="seller_name")
+    @NonNull
     private String name;
 
-    public SellerEntity() {
-    }
-
-    public SellerEntity(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
+    @ManyToOne
+    @JoinColumn(name = "store_id")
+    private StoreEntity store;
 }

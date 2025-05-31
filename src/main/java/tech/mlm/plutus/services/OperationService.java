@@ -1,9 +1,11 @@
 package tech.mlm.plutus.services;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tech.mlm.plutus.dtos.OperationDTO;
 import tech.mlm.plutus.dtos.OperationEntities;
+import tech.mlm.plutus.dtos.requests.CreateOperationRequestDTO;
 import tech.mlm.plutus.dtos.requests.UpdateOperationRequest;
 import tech.mlm.plutus.entities.OperationEntity;
 import tech.mlm.plutus.entities.ProductEntity;
@@ -17,8 +19,8 @@ import tech.mlm.plutus.utils.types.OperationType;
 
 import java.util.List;
 
-
 @Service
+@RequiredArgsConstructor
 public class OperationService {
 
     private final OperationRepository operationRepository;
@@ -26,19 +28,6 @@ public class OperationService {
     private final SellerService sellerService;
     private final StoreService storeService;
     private final OperationValidator operationValidator;
-
-    public OperationService(OperationRepository operationRepository,
-                            ProductService productService,
-                            SellerService sellerService,
-                            StoreService storeService,
-                            OperationValidator operationValidator
-    ) {
-        this.operationRepository = operationRepository;
-        this.productService = productService;
-        this.sellerService = sellerService;
-        this.storeService = storeService;
-        this.operationValidator = operationValidator;
-    }
 
     public OperationEntity createOperation(OperationType operationType,
                                            ProductEntity productEntity,
@@ -66,7 +55,8 @@ public class OperationService {
     }
 
     @Transactional
-    public OperationEntity createOperationEntity(OperationDTO dto) {
+    public OperationEntity createOperationEntity(CreateOperationRequestDTO dto) {
+
         operationValidator.validateEntities(dto);
         OperationEntities entities = loadEntities(dto);
 
@@ -81,12 +71,12 @@ public class OperationService {
         );
     }
 
-    private OperationEntities loadEntities(OperationDTO dto) {
-        ProductEntity productEntity = productService.findByBarcode(dto.productDTO().barcode());
-        StoreEntity originStore = storeService.findById(dto.originStoreDTO().id());
-        StoreEntity destinationStore = storeService.findById(dto.destinationStoreDTO().id());
-        SellerEntity originSeller = sellerService.findById(dto.originSellerDTO().id());
-        SellerEntity destinationSeller = sellerService.findById(dto.destinationSellerDTO().id());
+    private OperationEntities loadEntities(CreateOperationRequestDTO dto) {
+        ProductEntity productEntity = productService.findByBarcode(dto.productId());
+        StoreEntity originStore = storeService.findById(dto.originStoreId());
+        StoreEntity destinationStore = storeService.findById(dto.destinationStoreId());
+        SellerEntity originSeller = sellerService.findById(dto.originSellerId());
+        SellerEntity destinationSeller = sellerService.findById(dto.destinationSellerId());
 
         return new OperationEntities(productEntity, originStore, destinationStore, originSeller, destinationSeller);
     }
@@ -109,7 +99,26 @@ public class OperationService {
                 .orElseThrow(() ->  new OperationNotFoundException("Operation with "+ operationId + " not found"));
     }
 
-    public List<OperationEntity> getAllOperations() {
-        return operationRepository.findAll();
+    public List<OperationEntity> getAllOperationsAsOriginStore(StoreEntity storeEntity) {
+        List<OperationEntity> operationsList =  getAllOperationsByStore(storeEntity);
+        return operationsList.stream()
+                             .filter(operationEntity -> storeEntity.equals(operationEntity.getOriginStore()))
+                             .toList();
+    }
+
+    public List<OperationEntity> getAllOperations(){
+        List<OperationEntity> operationsList = operationRepository.findAll();
+        return operationsList.isEmpty() ? List.of() : operationsList;
+    }
+
+    public List<OperationEntity> getAllOperationsAsDestinationStore(StoreEntity storeEntity){
+        List<OperationEntity> operationsList = getAllOperationsByStore(storeEntity);
+        return operationsList.stream()
+                .filter(operationEntity -> storeEntity.equals(operationEntity.getDestinationStore()))
+                .toList();
+    }
+
+    public List<OperationEntity> getAllOperationsByStore(StoreEntity storeEntity) {
+        return operationRepository.findAllByStore(storeEntity).orElseThrow(() ->  new OperationNotFoundException("Operations  not found"));
     }
 }

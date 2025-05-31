@@ -1,56 +1,45 @@
 package tech.mlm.plutus.controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tech.mlm.plutus.dtos.OperationDTO;
+import tech.mlm.plutus.dtos.requests.CreateOperationRequestDTO;
 import tech.mlm.plutus.dtos.requests.UpdateOperationRequest;
 import tech.mlm.plutus.entities.OperationEntity;
 import tech.mlm.plutus.services.OperationService;
 
 @RestController
-@RequestMapping("/operations")
+@RequestMapping("/api/v1")
+@RequiredArgsConstructor
 public class OperationController {
-
     private final OperationService operationService;
+    private final static String ROOT_URL = "/operation";
 
-    public OperationController(OperationService operationService) {
-        this.operationService = operationService;
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(ROOT_URL)
+    public ResponseEntity<?> getAllOperations() {
+        return ResponseEntity.ok().body(operationService.getAllOperations());
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createOperation(@RequestBody OperationDTO operationDTO) {
-        try {
-            OperationEntity entity = operationService.createOperationEntity(operationDTO);
-            return ResponseEntity.ok().body(operationService.save(entity));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(ROOT_URL )
+    public ResponseEntity<?> createOperation(@RequestBody CreateOperationRequestDTO operationDTO) {
+        OperationEntity entity = operationService.createOperationEntity(operationDTO);
+        return ResponseEntity.ok().body(operationService.save(entity));
     }
 
-    @GetMapping("")
-    public ResponseEntity<?> getOperations() {
-        try{
-            return ResponseEntity.ok().body(operationService.getAllOperations());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getOperationById(@PathVariable("id") Long id) {
-        try{
-            return ResponseEntity.ok().body(operationService.getOperationById(id));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @PostMapping("/update")
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping(ROOT_URL)
     public ResponseEntity<?> updateOperation(@RequestBody UpdateOperationRequest request) {
-        try{
-            return ResponseEntity.ok().body(operationService.updateOperation(request));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok().body(operationService.updateOperation(request));
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(ROOT_URL + "/{id}")
+    public ResponseEntity<?> getOperationById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok().body(operationService.getOperationById(id));
+    }
+
 }

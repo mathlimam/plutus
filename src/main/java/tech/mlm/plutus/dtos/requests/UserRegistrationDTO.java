@@ -1,5 +1,5 @@
 package tech.mlm.plutus.dtos.requests;
 
-import tech.mlm.plutus.utils.types.Role;
+import tech.mlm.plutus.utils.types.Roles;
 
-public record UserRegistrationDTO(String username, String password, Long storeId, Role role) {}
+public record UserRegistrationDTO(String username, String password, String role) {}

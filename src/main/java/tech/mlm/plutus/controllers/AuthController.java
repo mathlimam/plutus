@@ -1,7 +1,11 @@
 package tech.mlm.plutus.controllers;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,20 +21,16 @@ import tech.mlm.plutus.dtos.responses.UserRegistrationResponse;
 import tech.mlm.plutus.services.UserService;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1")
+@RequiredArgsConstructor
 public class AuthController {
     private final UserService userService;
     private final JwtService jwtService;
     private final JwtProperties jwtProperties;
+    private static final String ROOT_URL = "/auth";
 
-
-    public AuthController(UserService userService, JwtProperties jwtProperties, JwtService jwtService){
-        this.userService = userService;
-        this.jwtProperties = jwtProperties;
-        this.jwtService = jwtService;
-    }
-
-    @PostMapping("/register")
+    @PreAuthorize("permitAll()")
+    @PostMapping(ROOT_URL + "/register")
     public ResponseEntity<?> register(@RequestBody UserRegistrationDTO dto){
         try{
             UserDTO userDTO = userService.createUser(dto);
@@ -41,7 +41,8 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/login")
+    @PreAuthorize("permitAll()")
+    @PostMapping(ROOT_URL + "/login")
     public ResponseEntity<?> login(@RequestBody UserLoginDTO dto){
         boolean authentication = userService.authenticateUser(dto.username(), dto.password());
         if (authentication) {

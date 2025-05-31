@@ -1,6 +1,9 @@
 package tech.mlm.plutus.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 
 import java.util.ArrayList;
@@ -9,46 +12,35 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class StoreEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
+    @NonNull
     private String name;
 
-    @OneToMany
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    @NonNull
     private final Set<SellerEntity> sellers = new HashSet<>();
 
     @OneToMany(mappedBy="originStore")
+    @NonNull
     private final List<OperationEntity> originOperations = new ArrayList<>();
 
     @OneToMany(mappedBy="destinationStore")
+    @NonNull
     private final List<OperationEntity> destinationOperations = new ArrayList<>();
 
-    public StoreEntity() {}
-
-    public StoreEntity(String name) {
-        this.name = name;
-    }
-
-    public String getName () {
-        return name;
-    }
-
-    public void setName (String name) {
-        this.name = name;
-    }
-
-    public Long getId () {
-        return id;
-    }
-
-    public Set<SellerEntity> getSellers () {
-        return sellers;
-    }
-
-
+    @OneToOne()
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
     public void addSeller(SellerEntity seller) {
         sellers.add(seller);
     }

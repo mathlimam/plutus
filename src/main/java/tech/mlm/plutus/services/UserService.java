@@ -27,11 +27,8 @@ public class UserService {
 
     public UserDTO createUser(UserRegistrationDTO dto){
         if(userRepository.existsByUsername(dto.username())) throw new DuplicatedUsernameException();
-        StoreEntity storeEntity = storeService.findById(dto.storeId());
-
         UserEntity user = new UserEntity(dto.username(),
                               passwordEncoder.encode(dto.password()),
-                              storeEntity,
                               dto.role());
 
         return (userMapper.toDTO(userRepository.save(user)));
@@ -40,5 +37,13 @@ public class UserService {
     public boolean authenticateUser(String username, String rawPassword){
         UserEntity userEntity = userRepository.findUserByUsername(username).orElseThrow(UserNotFoundException::new);
         return passwordEncoder.matches(rawPassword, userEntity.getPassword());
+    }
+
+    public UserEntity findById(Long id){
+        return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    }
+
+    public UserEntity save(UserEntity user){
+        return userRepository.save(user);
     }
 }

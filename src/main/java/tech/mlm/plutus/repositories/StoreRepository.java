@@ -9,10 +9,10 @@ import tech.mlm.plutus.entities.StoreEntity;
 
 
 public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
-    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END " +
-                    "FROM store_entity s " +
-                    "JOIN store_entity_sellers ss ON s.id = ss.store_entity_id " +
-                    "WHERE ss.sellers_id = :sellerId AND s.id = :storeId",
-            nativeQuery = true)
-    boolean existsBySellerAndStoreId(@Param("storeId") Long storeId, @Param("sellerId") Long sellerId);
+
+    String EXISTS_BY_SELLER_AND_STORE_ID_QUERY =  "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END " +
+                                            "FROM SellerEntity s " +
+                                            "WHERE s.id = :sellerId AND s.store.id = :storeId";
+    @Query(EXISTS_BY_SELLER_AND_STORE_ID_QUERY)
+    boolean existsBySellerAndStoreId(@Param("sellerId") Long sellerId, @Param("storeId") Long storeId);
 }

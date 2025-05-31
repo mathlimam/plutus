@@ -1,34 +1,23 @@
 package tech.mlm.plutus.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class ProductEntity {
     @Id
+    @Column(unique = true)
+    @NotNull
     private String barcode;
 
-    @Column(nullable = false)
+    @Column(name = "product_name")
+    @NonNull
     private String name;
-
-    public ProductEntity() {}
-
-    public ProductEntity(String barcode, String name) {
-        this.barcode = barcode;
-        this.name = name;
-    }
-
-    public String getName(){
-        return name;
-    }
-
-    public void setName(String name){
-        this.name = name;
-    }
-
-    public String getBarcode(){
-        return barcode;
-    }
-
 }
 
 

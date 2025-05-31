@@ -1,9 +1,12 @@
 package tech.mlm.plutus.mappers;
 
 import org.springframework.stereotype.Component;
+import tech.mlm.plutus.dtos.requests.CreateOperationRequestDTO;
 import tech.mlm.plutus.entities.OperationEntity;
 import tech.mlm.plutus.dtos.OperationDTO;
 import tech.mlm.plutus.services.OperationService;
+
+import java.util.List;
 
 @Component
 public class OperationMapper {
@@ -19,15 +22,17 @@ public class OperationMapper {
         this.storeMapper = storeMapper;
     }
 
-    public OperationEntity toEntity(OperationDTO dto){
+    /*public OperationEntity toEntity(OperationDTO dto){
         try {
             if (dto == null) throw new IllegalArgumentException("dto cannot be null");
             return operationService.createOperationEntity(dto);
 
         } catch (Exception e){ throw new IllegalArgumentException("dto cannot be convert to OperationDTO", e);}
-    }
+    }*/
 
-    public OperationDTO toDto(OperationEntity entity){
+
+
+    public OperationDTO toDTO(OperationEntity entity){
         return new OperationDTO(entity.getType(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt(),
@@ -38,5 +43,9 @@ public class OperationMapper {
                 storeMapper.toDTO(entity.getDestinationStore()),
                 productMapper.toDTO(entity.getProductEntity()),
                 entity.getQuantity());
+    }
+
+    public List<OperationDTO> toDTO(List<OperationEntity> operations){
+        return operations.stream().map(this::toDTO).toList();
     }
 }

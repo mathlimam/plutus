@@ -6,7 +6,6 @@ import tech.mlm.plutus.entities.ProductEntity;
 
 @Component
 public class ProductMapper {
-
     public ProductDTO toDTO(ProductEntity entity) {
         return new ProductDTO(entity.getBarcode(), entity.getName());
     }
