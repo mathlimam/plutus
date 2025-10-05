@@ -1,6 +1,8 @@
 package tech.mlm.plutus.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +25,8 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(ROOT_URL)
-    public ResponseEntity<?> createProduct(@RequestBody ProductDTO request){
+    public ResponseEntity<ProductEntity> createProduct(@RequestBody @Valid ProductDTO request){
         ProductEntity product = new ProductEntity(request.barcode(), request.name());
-        return ResponseEntity.ok().body(productService.save(product));
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(product));
     }
 }

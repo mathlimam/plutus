@@ -1,9 +1,12 @@
 package tech.mlm.plutus.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import tech.mlm.plutus.dtos.SellerDTO;
 import tech.mlm.plutus.dtos.requests.CreateSellerDTO;
 import tech.mlm.plutus.entities.SellerEntity;
 import tech.mlm.plutus.mappers.SellerMapper;
@@ -29,8 +32,8 @@ public class SellerController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(ROOT_URL)
-    public ResponseEntity<?> createSeller(@RequestBody CreateSellerDTO sellerDTO) {
-        return ResponseEntity.ok().body(sellerService.create(sellerDTO));
+    public ResponseEntity<SellerDTO> createSeller(@RequestBody @Valid CreateSellerDTO sellerDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(sellerService.create(sellerDTO));
     }
 
     @PreAuthorize("isAuthenticated()")

@@ -1,6 +1,8 @@
 package tech.mlm.plutus.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,19 +36,19 @@ public class StoreController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(ROOT_URL)
-    public ResponseEntity<?> createStore(@RequestBody CreateStoreDTO request){
-        return ResponseEntity.ok().body(storeService.createStore(request));
+    public ResponseEntity<?> createStore(@RequestBody @Valid CreateStoreDTO request){
+        return ResponseEntity.status(HttpStatus.CREATED).body(storeService.createStore(request));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(ROOT_URL + "/add-seller")
-    public ResponseEntity<?> addSeller(@RequestBody AddSellerRequestDTO request) {
+    public ResponseEntity<?> addSeller(@RequestBody @Valid AddSellerRequestDTO request) {
         return ResponseEntity.ok().body(storeService.addSeller(request));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(ROOT_URL + "/add-list-of-seller")
-    public ResponseEntity<?> addListOfSellers(@RequestBody AddListOfSellersRequestDTO request) {
+    public ResponseEntity<?> addListOfSellers(@RequestBody @Valid AddListOfSellersRequestDTO request) {
         return ResponseEntity.ok().body(storeService.addListOfSellers(request));
     }
 

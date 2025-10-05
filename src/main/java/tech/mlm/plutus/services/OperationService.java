@@ -2,6 +2,7 @@ package tech.mlm.plutus.services;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 import tech.mlm.plutus.dtos.OperationDTO;
 import tech.mlm.plutus.dtos.OperationEntities;
@@ -85,6 +86,7 @@ public class OperationService {
                 .orElseThrow(() ->  new OperationNotFoundException("Operation with "+ operationId + " not found")));
     }
 
+    @EntityGraph
     public List<OperationDTO> getAllOperationsAsOriginStore(StoreEntity storeEntity) {
         List<OperationEntity> operationsList =  getAllOperationsByStore(storeEntity);
         return mapper.toDTO(operationsList.stream()
