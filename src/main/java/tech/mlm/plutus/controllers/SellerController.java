@@ -12,6 +12,8 @@ import tech.mlm.plutus.entities.SellerEntity;
 import tech.mlm.plutus.mappers.SellerMapper;
 import tech.mlm.plutus.services.SellerService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
@@ -22,11 +24,11 @@ public class SellerController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(ROOT_URL)
-    public ResponseEntity<?> getAllSellers(){
+    public ResponseEntity<List<SellerDTO>> getAllSellers(){
         return ResponseEntity.ok().body(sellerService.findAll());
     }
 
-    public ResponseEntity<?> setSellerStore(@PathVariable Long sellerId, @PathVariable Long storeId) {
+    public ResponseEntity<SellerDTO> setSellerStore(@PathVariable Long sellerId, @PathVariable Long storeId) {
         return ResponseEntity.ok(sellerService.setSellerStore(sellerId, storeId));
     }
 
@@ -38,7 +40,7 @@ public class SellerController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(ROOT_URL + "/{id}")
-    public ResponseEntity<?> getSellerById(@PathVariable Long id) {
+    public ResponseEntity<SellerDTO> getSellerById(@PathVariable Long id) {
         return ResponseEntity.ok().body(sellerService.findById(id));
     }
 }

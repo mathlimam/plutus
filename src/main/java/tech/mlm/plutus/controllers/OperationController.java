@@ -12,6 +12,8 @@ import tech.mlm.plutus.dtos.requests.UpdateOperationRequest;
 
 import tech.mlm.plutus.services.OperationService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class OperationController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(ROOT_URL)
-    public ResponseEntity<?> getAllOperations() {
+    public ResponseEntity<List<OperationDTO>> getAllOperations() {
         return ResponseEntity.ok().body(operationService.getAllOperations());
     }
 
@@ -33,13 +35,13 @@ public class OperationController {
 
     @PreAuthorize("isAuthenticated()")
     @PutMapping(ROOT_URL)
-    public ResponseEntity<?> updateOperation(@RequestBody @Valid UpdateOperationRequest request) {
+    public ResponseEntity<OperationDTO> updateOperation(@RequestBody @Valid UpdateOperationRequest request) {
         return ResponseEntity.ok().body(operationService.updateOperation(request));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(ROOT_URL + "/{id}")
-    public ResponseEntity<?> getOperationById(@PathVariable("id") Long id) {
+    public ResponseEntity<OperationDTO> getOperationById(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(operationService.getOperationById(id));
     }
 }

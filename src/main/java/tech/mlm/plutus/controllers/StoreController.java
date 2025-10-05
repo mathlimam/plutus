@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tech.mlm.plutus.dtos.SellerDTO;
+import tech.mlm.plutus.dtos.StoreDTO;
 import tech.mlm.plutus.dtos.requests.AddListOfSellersRequestDTO;
 import tech.mlm.plutus.dtos.requests.AddSellerRequestDTO;
 import tech.mlm.plutus.dtos.requests.CreateStoreDTO;
@@ -30,25 +31,25 @@ public class StoreController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(ROOT_URL)
-    public ResponseEntity<?> getStores(){
+    public ResponseEntity<List<StoreDTO>> getStores(){
         return ResponseEntity.ok().body(mapper.toDTO(storeService.findAll()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(ROOT_URL)
-    public ResponseEntity<?> createStore(@RequestBody @Valid CreateStoreDTO request){
+    public ResponseEntity<StoreDTO> createStore(@RequestBody @Valid CreateStoreDTO request){
         return ResponseEntity.status(HttpStatus.CREATED).body(storeService.createStore(request));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(ROOT_URL + "/add-seller")
-    public ResponseEntity<?> addSeller(@RequestBody @Valid AddSellerRequestDTO request) {
+    public ResponseEntity<StoreDTO> addSeller(@RequestBody @Valid AddSellerRequestDTO request) {
         return ResponseEntity.ok().body(storeService.addSeller(request));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(ROOT_URL + "/add-list-of-seller")
-    public ResponseEntity<?> addListOfSellers(@RequestBody @Valid AddListOfSellersRequestDTO request) {
+    public ResponseEntity<List<StoreDTO>> addListOfSellers(@RequestBody @Valid AddListOfSellersRequestDTO request) {
         return ResponseEntity.ok().body(storeService.addListOfSellers(request));
     }
 
