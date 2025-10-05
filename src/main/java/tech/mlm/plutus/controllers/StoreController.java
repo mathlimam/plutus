@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import tech.mlm.plutus.dtos.SellerDTO;
 import tech.mlm.plutus.dtos.requests.AddListOfSellersRequestDTO;
 import tech.mlm.plutus.dtos.requests.AddSellerRequestDTO;
 import tech.mlm.plutus.dtos.requests.CreateStoreDTO;
@@ -46,13 +47,7 @@ public class StoreController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(ROOT_URL + "/add-list-of-seller")
     public ResponseEntity<?> addListOfSellers(@RequestBody AddListOfSellersRequestDTO request) {
-        List<Long> sellerIds = request.sellerIds();
-        StoreEntity store = storeService.findById(request.storeId());
-        sellerIds.forEach(sellerId -> {
-            SellerEntity seller = sellerService.findById(sellerId);
-            store.addSeller(seller);
-            seller.setStore(store);
-        });
-        return ResponseEntity.ok().body(mapper.toGetStoreResponseDTO(storeService.save(store)));
+        return ResponseEntity.ok().body(storeService.addListOfSellers(request));
     }
+
 }

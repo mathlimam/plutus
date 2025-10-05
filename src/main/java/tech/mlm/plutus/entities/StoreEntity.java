@@ -14,28 +14,26 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@RequiredArgsConstructor
-@AllArgsConstructor
 @NoArgsConstructor
-public class StoreEntity {
+public class StoreEntity extends DefaultEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(unique = true)
-    @NonNull
+    @NotNull
     private String name;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    @NonNull
+    @NotNull
     private final Set<SellerEntity> sellers = new HashSet<>();
 
     @OneToMany(mappedBy="originStore")
-    @NonNull
+    @NotNull
     private final List<OperationEntity> originOperations = new ArrayList<>();
 
     @OneToMany(mappedBy="destinationStore")
-    @NonNull
+    @NotNull
     private final List<OperationEntity> destinationOperations = new ArrayList<>();
 
     @OneToOne()

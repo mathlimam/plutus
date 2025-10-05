@@ -1,6 +1,5 @@
 package tech.mlm.plutus.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -15,15 +14,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id")
-public class OperationEntity {
+@EqualsAndHashCode(of = "id", callSuper = false)
+public class OperationEntity extends DefaultEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(name="operation_type")
-    @NonNull
+    @NotNull
     private OperationType type;
 
     @Enumerated(EnumType.STRING)
@@ -31,35 +30,35 @@ public class OperationEntity {
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    @NonNull
+    @NotNull
     private ProductEntity productEntity;
 
     @ManyToOne
     @JoinColumn(name = "origin_store_id")
-    @NonNull
+    @NotNull
     private StoreEntity originStore;
 
     @ManyToOne
     @JoinColumn(name = "destination_store_id")
-    @NonNull
+    @NotNull
     private StoreEntity destinationStore;
 
     @ManyToOne
     @JoinColumn(name = "origin_seller_id")
-    @NonNull
+    @NotNull
     private SellerEntity originSeller;
 
     @ManyToOne
     @JoinColumn(name = "destination_seller_id")
-    @NonNull
+    @NotNull
     private SellerEntity destinationSeller;
 
     @Column(name="quantity")
-    @NonNull
+    @NotNull
     private int quantity;
 
     @Column(name="created_at")
-    @NonNull
+    @NotNull
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name="updated_at")
@@ -99,14 +98,12 @@ public class OperationEntity {
         return this;
     }
 
-    public OperationEntity setOperationStatus(StatusType status) {
+    public void setOperationStatus(StatusType status) {
         this.setStatus(status);
-        return this;
     }
 
-    public OperationEntity setOperationInvoice(String invoice){
+    public void setOperationInvoice(String invoice){
         this.setInvoiceNumber(invoice);
-        return this;
     }
 
     public OperationEntity setOperationQuantity(int quantity) {

@@ -16,7 +16,7 @@ public class ProductEntity {
     private String barcode;
 
     @Column(name = "product_name")
-    @NonNull
+    @NotNull
     private String name;
 }
 

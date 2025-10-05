@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface OperationRepository extends JpaRepository<OperationEntity, Long> {
     @Query("SELECT o FROM OperationEntity o WHERE :store IN (o.originStore, o.destinationStore)")
     public Optional<List<OperationEntity>> findAllByStore(StoreEntity storeEntity);
+
 }

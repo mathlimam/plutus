@@ -7,6 +7,7 @@ import tech.mlm.plutus.dtos.responses.GetStoreResponseDTO;
 import tech.mlm.plutus.entities.StoreEntity;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -27,7 +28,9 @@ public class StoreMapper {
         return new GetStoreResponseDTO(entity.getId(),
                                        entity.getName(),
                                        entity.getSellers().stream()
-                                              .map(seller -> new SellerDTO(seller.getId(), seller.getName()))
+                                              .map(seller -> new SellerDTO(seller.getId(),
+                                                      seller.getName(),
+                                                      entity.getName()))
                                               .toList());
     }
 }

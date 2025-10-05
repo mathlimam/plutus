@@ -10,13 +10,11 @@ import java.util.List;
 
 @Component
 public class OperationMapper {
-    private final OperationService operationService;
     private final ProductMapper productMapper;
     private final SellerMapper sellerMapper;
     private final StoreMapper storeMapper;
 
-    public OperationMapper(OperationService operationService, ProductMapper productMapper, SellerMapper sellerMapper, StoreMapper storeMapper) {
-        this.operationService = operationService;
+    public OperationMapper(ProductMapper productMapper, SellerMapper sellerMapper, StoreMapper storeMapper) {
         this.productMapper = productMapper;
         this.sellerMapper = sellerMapper;
         this.storeMapper = storeMapper;

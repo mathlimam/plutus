@@ -4,10 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import tech.mlm.plutus.dtos.OperationDTO;
 import tech.mlm.plutus.dtos.requests.CreateOperationRequestDTO;
 import tech.mlm.plutus.dtos.requests.UpdateOperationRequest;
-import tech.mlm.plutus.entities.OperationEntity;
+
 import tech.mlm.plutus.services.OperationService;
 
 @RestController
@@ -26,8 +25,7 @@ public class OperationController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping(ROOT_URL )
     public ResponseEntity<?> createOperation(@RequestBody CreateOperationRequestDTO operationDTO) {
-        OperationEntity entity = operationService.createOperationEntity(operationDTO);
-        return ResponseEntity.ok().body(operationService.save(entity));
+        return ResponseEntity.ok().body(operationService.createOperationEntity(operationDTO));
     }
 
     @PreAuthorize("isAuthenticated()")

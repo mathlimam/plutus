@@ -14,7 +14,7 @@ import tech.mlm.plutus.services.SellerService;
 @RequiredArgsConstructor
 public class SellerController {
     private final SellerService sellerService;
-    private final SellerMapper sellerMapper;
+    private final SellerMapper mapper;
     private final static String ROOT_URL = "/seller";
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -23,17 +23,19 @@ public class SellerController {
         return ResponseEntity.ok().body(sellerService.findAll());
     }
 
+    public ResponseEntity<?> setSellerStore(@PathVariable Long sellerId, @PathVariable Long storeId) {
+        return ResponseEntity.ok(sellerService.setSellerStore(sellerId, storeId));
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(ROOT_URL)
     public ResponseEntity<?> createSeller(@RequestBody CreateSellerDTO sellerDTO) {
-        SellerEntity seller = new SellerEntity(sellerDTO.name());
-        return ResponseEntity.ok().body(sellerMapper.toDTO(sellerService.save(seller)));
+        return ResponseEntity.ok().body(sellerService.create(sellerDTO));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(ROOT_URL + "/{id}")
     public ResponseEntity<?> getSellerById(@PathVariable Long id) {
-        SellerEntity seller = sellerService.findById(id);
-        return ResponseEntity.ok().body(sellerMapper.toDTO(seller));
+        return ResponseEntity.ok().body(sellerService.findById(id));
     }
 }

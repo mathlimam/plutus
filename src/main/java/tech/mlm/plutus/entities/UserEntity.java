@@ -51,6 +51,4 @@ public class UserEntity {
         this.password = password;
         this.role = role;
     }
-
-
 }

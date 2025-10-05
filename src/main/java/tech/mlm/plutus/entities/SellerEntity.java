@@ -2,20 +2,20 @@ package tech.mlm.plutus.entities;
 
 import jakarta.persistence.*;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
-public class SellerEntity {
+public class SellerEntity extends DefaultEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name="seller_name")
-    @NonNull
+    @NotNull
     private String name;
 
     @ManyToOne
