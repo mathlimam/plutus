@@ -6,8 +6,6 @@ import jakarta.validation.constraints.Positive;
 import tech.mlm.plutus.utils.types.OperationType;
 
 public record CreateOperationRequestDTO(
-
-
         @NotNull OperationType operationType,
         @NotNull Long originSellerId,
         @NotNull Long destinationSellerId,

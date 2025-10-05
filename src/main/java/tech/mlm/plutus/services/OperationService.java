@@ -17,7 +17,6 @@ import tech.mlm.plutus.exceptions.OperationNotFoundException;
 import tech.mlm.plutus.mappers.OperationMapper;
 import tech.mlm.plutus.repositories.OperationRepository;
 import tech.mlm.plutus.utils.OperationValidator;
-import tech.mlm.plutus.utils.types.OperationType;
 
 import java.util.List;
 
@@ -32,27 +31,7 @@ public class OperationService {
     private final StoreService storeService;
     private final OperationValidator operationValidator;
 
-    public OperationEntity createOperation(OperationType operationType,
-                                           ProductEntity productEntity,
-                                           int quantity,
-                                           StoreEntity originStore,
-                                           StoreEntity destinationStore,
-                                           SellerEntity originSeller,
-                                           SellerEntity destinationSeller) {
-
-        OperationEntity operationEntity = new OperationEntity(
-                operationType,
-                productEntity,
-                originStore,
-                destinationStore,
-                originSeller,
-                destinationSeller,
-                quantity
-        );
-
-        return operationRepository.save(operationEntity);
-    }
-
+    @Transactional
     public OperationEntity save(OperationEntity operationEntity) {
         return operationRepository.save(operationEntity);
     }
@@ -86,6 +65,7 @@ public class OperationService {
         return new OperationEntities(productEntity, originStore, destinationStore, originSeller, destinationSeller);
     }
 
+    @Transactional
     public OperationDTO updateOperation(UpdateOperationRequest request) {
         if (request == null) throw new InvalidRequestException("request cannot be null");
 
@@ -99,6 +79,7 @@ public class OperationService {
         return mapper.toDTO(operationRepository.save(entity));
     }
 
+
     public OperationDTO getOperationById(Long operationId) {
         return mapper.toDTO(operationRepository.findById(operationId)
                 .orElseThrow(() ->  new OperationNotFoundException("Operation with "+ operationId + " not found")));
@@ -110,6 +91,7 @@ public class OperationService {
                              .filter(operationEntity -> storeEntity.equals(operationEntity.getOriginStore()))
                              .toList());
     }
+
 
     public List<OperationDTO> getAllOperations(){
         List<OperationEntity> operationsList = operationRepository.findAll();

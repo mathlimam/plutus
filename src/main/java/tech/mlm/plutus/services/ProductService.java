@@ -1,5 +1,6 @@
 package tech.mlm.plutus.services;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import tech.mlm.plutus.entities.ProductEntity;
 import tech.mlm.plutus.exceptions.ProductNotFoundException;
@@ -17,6 +18,7 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
+    @Transactional
     public ProductEntity save(ProductEntity product) {
         return productRepository.save(product);
     }

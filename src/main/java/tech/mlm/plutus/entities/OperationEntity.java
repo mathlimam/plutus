@@ -106,11 +106,6 @@ public class OperationEntity extends DefaultEntity {
         this.setInvoiceNumber(invoice);
     }
 
-    public OperationEntity setOperationQuantity(int quantity) {
-        this.setQuantity(quantity);
-        return this;
-    }
-
     public void setQuantity(int quantity) {
         if (quantity <= 0) throw new InvalidProductQuantityException("A quantidade deve ser maior que zero.");
         this.quantity = quantity;

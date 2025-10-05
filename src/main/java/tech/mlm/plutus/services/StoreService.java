@@ -1,5 +1,6 @@
 package tech.mlm.plutus.services;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tech.mlm.plutus.dtos.StoreDTO;
@@ -23,24 +24,24 @@ public class StoreService {
     private final StoreMapper storeMapper;
     private final SellerRepository sellerRepository;
 
-    public boolean existsSellerByIdAndStoreId(Long storeId, Long sellerId) {
-        return repository.existsBySellerAndStoreId(sellerId, storeId);
-    }
-
+    @Transactional
     public StoreEntity save(StoreEntity store) {
         return repository.save(store);
     }
 
+    @Transactional
     public List<StoreEntity> save(List<StoreEntity> stores) {
         return repository.saveAll(stores);
     }
 
+    @Transactional
     public StoreDTO createStore(CreateStoreDTO request) {
         StoreEntity store = new StoreEntity();
         store.setName(request.name());
         return storeMapper.toDTO(repository.save(store));
     }
 
+    @Transactional
     public StoreDTO addSeller(AddSellerRequestDTO request) {
         StoreEntity store = findById(request.storeId());
         SellerEntity seller = sellerRepository.findById(request.sellerId()).orElseThrow();
@@ -49,30 +50,7 @@ public class StoreService {
         return storeMapper.toDTO(repository.save(store));
     }
 
-    public StoreDTO addSeller(Long storeId, List<Long> sellerIds) {
-        StoreEntity store = findById(storeId);
-        List<SellerEntity> sellers = sellerIds.stream()
-                .map(sellerId -> sellerRepository.findById(sellerId).orElseThrow())
-                .toList();
-
-        sellers.forEach(seller -> {
-            if (existsSellerByIdAndStoreId(storeId, seller.getId())) {
-                throw new IllegalArgumentException("Seller with id " + seller.getId() + " already exists in store with id " + storeId);
-            }
-            seller.setStore(store);
-            store.addSeller(seller);
-        });
-        return storeMapper.toDTO(repository.save(store));
-    }
-
-    public StoreEntity findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new StoreNotFoundException("Store with id " + id + " not found"));
-    }
-
-    public List<StoreEntity> findAll() {
-        return repository.findAll();
-    }
-
+    @Transactional
     public List<StoreDTO> addListOfSellers(AddListOfSellersRequestDTO request) {
         List<Long> sellerIds = request.sellerIds();
         var store = findById(request.storeId());
@@ -82,5 +60,13 @@ public class StoreService {
             store.addSeller(seller);
             return store;
         }).toList());
+    }
+
+    public StoreEntity findById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new StoreNotFoundException("Store with id " + id + " not found"));
+    }
+
+    public List<StoreEntity> findAll() {
+        return repository.findAll();
     }
 }

@@ -1,10 +1,8 @@
 package tech.mlm.plutus.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,11 +26,11 @@ public class StoreEntity extends DefaultEntity {
     @NotNull
     private final Set<SellerEntity> sellers = new HashSet<>();
 
-    @OneToMany(mappedBy="originStore")
+    @OneToMany(mappedBy="originStore", fetch = FetchType.LAZY)
     @NotNull
     private final List<OperationEntity> originOperations = new ArrayList<>();
 
-    @OneToMany(mappedBy="destinationStore")
+    @OneToMany(mappedBy="destinationStore", fetch = FetchType.LAZY)
     @NotNull
     private final List<OperationEntity> destinationOperations = new ArrayList<>();
 

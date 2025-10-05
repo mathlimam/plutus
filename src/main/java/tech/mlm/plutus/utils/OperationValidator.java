@@ -72,7 +72,7 @@ public class OperationValidator {
     }
 
     private void validateSellerStore(Long sellerId, Long storeId) {
-        if (!storeRepository.existsBySellerAndStoreId(storeId, sellerId)) {
+        if (!storeRepository.existsBySellerAndStoreId(sellerId, storeId)) {
             throw new IllegalArgumentException("Seller does not belong to the store");
         }
     }

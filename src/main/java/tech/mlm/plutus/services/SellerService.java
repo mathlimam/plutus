@@ -1,5 +1,6 @@
 package tech.mlm.plutus.services;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import tech.mlm.plutus.dtos.SellerDTO;
 import tech.mlm.plutus.dtos.requests.CreateSellerDTO;
@@ -7,7 +8,6 @@ import tech.mlm.plutus.entities.SellerEntity;
 import tech.mlm.plutus.exceptions.SellerNotFoundException;
 import tech.mlm.plutus.mappers.SellerMapper;
 import tech.mlm.plutus.repositories.SellerRepository;
-import tech.mlm.plutus.repositories.StoreRepository;
 
 import java.util.List;
 
@@ -25,13 +25,23 @@ public class SellerService {
         this.storeService = storeService;
     }
 
+    @Transactional
     public SellerDTO create(CreateSellerDTO dto){
         var seller = new SellerEntity();
         seller.setName(dto.name());
         return mapper.toDTO(repository.save(seller));
     }
+
+    @Transactional
     public SellerEntity save(SellerEntity entity) {
         return repository.save(entity);
+    }
+
+    @Transactional
+    public SellerDTO setSellerStore(Long sellerId, Long storeId) {
+        var seller = repository.findById(sellerId).orElseThrow();
+        seller.setStore(storeService.findById(storeId));
+        return mapper.toDTO(repository.save(seller));
     }
 
     public List<SellerDTO> findAll() {
@@ -46,9 +56,5 @@ public class SellerService {
         return repository.findById(id).orElseThrow(() -> new SellerNotFoundException("Seller with id " + id + " not found"));
     }
 
-    public SellerDTO setSellerStore(Long sellerId, Long storeId) {
-        var seller = repository.findById(sellerId).orElseThrow();
-        seller.setStore(storeService.findById(storeId));
-        return mapper.toDTO(repository.save(seller));
-    }
+
 }
