@@ -21,6 +21,8 @@ import tech.mlm.plutus.utils.OperationValidator;
 
 import java.util.List;
 
+import static tech.mlm.plutus.utils.types.StatusType.PENDING;
+
 @Service
 @RequiredArgsConstructor
 public class OperationService {
@@ -94,6 +96,11 @@ public class OperationService {
                              .toList());
     }
 
+    public List<OperationDTO> getAllOpenOperationsByStore(StoreEntity storeEntity) {
+        return mapper.toDTO(getAllOperationsByStore(storeEntity).stream()
+                .filter(operationEntity -> operationEntity.getStatus().name().equals("PENDING"))
+                .toList());
+    }
 
     public List<OperationDTO> getAllOperations(){
         List<OperationEntity> operationsList = operationRepository.findAll();

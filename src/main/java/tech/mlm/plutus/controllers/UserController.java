@@ -4,6 +4,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RestController;
+import tech.mlm.plutus.dtos.OperationDTO;
 import tech.mlm.plutus.entities.OperationEntity;
 import tech.mlm.plutus.entities.UserEntity;
 import tech.mlm.plutus.mappers.OperationMapper;
@@ -42,6 +43,13 @@ public class UserController {
         UserEntity user = getUserBySecurityContext();
         List<OperationEntity> operations = operationService.getAllOperationsByStore(user.getStore());
         return ResponseEntity.ok().body(operationMapper.toDTO(operations));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(ROOT_URL + "/operation/pending")
+    public ResponseEntity<List<OperationDTO>> getAllPendingOperation(){
+        UserEntity user = getUserBySecurityContext();
+        return ResponseEntity.ok().body(operationService.getAllOpenOperationsByStore(user.getStore()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
