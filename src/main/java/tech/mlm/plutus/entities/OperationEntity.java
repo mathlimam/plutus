@@ -3,6 +3,7 @@ package tech.mlm.plutus.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import tech.mlm.plutus.dtos.requests.UpdateOperationRequest;
 import tech.mlm.plutus.exceptions.InvalidProductQuantityException;
 import tech.mlm.plutus.utils.types.OperationType;
 import tech.mlm.plutus.utils.types.StatusType;
@@ -80,6 +81,8 @@ public class OperationEntity extends DefaultEntity {
         this.originSeller = originSeller;
         this.destinationSeller = destinationSeller;
         this.quantity = quantity;
+
+        validate();
     }
 
     @PrePersist
@@ -106,8 +109,40 @@ public class OperationEntity extends DefaultEntity {
         this.setInvoiceNumber(invoice);
     }
 
-    public void setQuantity(int quantity) {
+    public void update(UpdateOperationRequest request) {
+
+        if (request.operationType() != null) {
+            this.type = request.operationType();
+        }
+
+        if (request.status() != null) {
+            this.status = request.status();
+        }
+
+        if (request.invoiceNumber() != null) {
+            this.invoiceNumber = request.invoiceNumber();
+        }
+
+        if (request.quantity() > 0) {
+            this.quantity = request.quantity();
+        }
+    }
+
+    private void validate(){
+        validateQuantity(this.quantity);
+        validateSellers(this.originSeller, this.destinationSeller);
+        validateStores(this.originStore, this.destinationStore);
+    }
+
+    private void validateQuantity(int quantity) {
         if (quantity <= 0) throw new InvalidProductQuantityException("A quantidade deve ser maior que zero.");
-        this.quantity = quantity;
+    }
+
+    private void validateStores(StoreEntity originStore, StoreEntity destinationStore) {
+        if (originStore.equals(destinationStore)) throw new IllegalArgumentException("Origin and destination stores must be different");
+    }
+
+    private void validateSellers(SellerEntity originSeller, SellerEntity destinationSeller) {
+        if(originSeller.equals(destinationSeller)) throw new IllegalArgumentException("Origin and destination sellers must be different");
     }
 }

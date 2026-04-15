@@ -7,6 +7,7 @@ import tech.mlm.plutus.dtos.OperationDTO;
 import tech.mlm.plutus.services.OperationService;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class OperationMapper {
@@ -44,6 +45,6 @@ public class OperationMapper {
     }
 
     public List<OperationDTO> toDTO(List<OperationEntity> operations){
-        return operations.stream().map(this::toDTO).toList();
+        return operations.stream().filter(Objects::nonNull).map(this::toDTO).toList();
     }
 }

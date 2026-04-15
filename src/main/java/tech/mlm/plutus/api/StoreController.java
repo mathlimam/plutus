@@ -1,4 +1,4 @@
-package tech.mlm.plutus.controllers;
+package tech.mlm.plutus.api;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -6,19 +6,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import tech.mlm.plutus.dtos.SellerDTO;
 import tech.mlm.plutus.dtos.StoreDTO;
 import tech.mlm.plutus.dtos.requests.AddListOfSellersRequestDTO;
 import tech.mlm.plutus.dtos.requests.AddSellerRequestDTO;
 import tech.mlm.plutus.dtos.requests.CreateStoreDTO;
-import tech.mlm.plutus.entities.SellerEntity;
-import tech.mlm.plutus.entities.StoreEntity;
 import tech.mlm.plutus.mappers.StoreMapper;
 import tech.mlm.plutus.services.SellerService;
 import tech.mlm.plutus.services.StoreService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")

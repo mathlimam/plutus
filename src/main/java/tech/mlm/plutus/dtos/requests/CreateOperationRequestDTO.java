@@ -13,4 +13,5 @@ public record CreateOperationRequestDTO(
         @NotNull Long destinationStoreId,
         @NotNull @NotBlank String productId,
         @NotNull @Positive int quantity
+
 ) {}

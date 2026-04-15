@@ -1,4 +1,4 @@
-package tech.mlm.plutus.controllers;
+package tech.mlm.plutus.api;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class OperationController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(ROOT_URL)
     public ResponseEntity<List<OperationDTO>> getAllOperations() {
-        return ResponseEntity.ok().body(operationService.getAllOperations());
+        return ResponseEntity.ok().body(operationService.getAll());
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -42,6 +42,6 @@ public class OperationController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping(ROOT_URL + "/{id}")
     public ResponseEntity<OperationDTO> getOperationById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok().body(operationService.getOperationById(id));
+        return ResponseEntity.ok().body(operationService.getById(id));
     }
 }

@@ -21,7 +21,6 @@ import static tech.mlm.plutus.utils.types.LabelsEnum.STORE;
 @RequiredArgsConstructor
 public class OperationValidator {
     private final StoreRepository storeRepository;
-    private final SellerRepository sellerRepository;
     private final ProductRepository productRepository;
 
     public void validateEntities(CreateOperationRequestDTO dto){
@@ -43,17 +42,11 @@ public class OperationValidator {
     }
 
     private void validateStores(Long originStoreId, Long destinationStoreId) {
-        if (Objects.equals(originStoreId, destinationStoreId)) {
-            throw new IllegalArgumentException("Origin and destination stores must be different");
-        }
         validateEntity(originStoreId, storeRepository, STORE);
         validateEntity(destinationStoreId, storeRepository, STORE);
     }
 
     private void validateSellers(Long originSellerId, Long destinationSellerId, Long originStoreId, Long destinationStoreId) {
-        if (Objects.equals(originSellerId, destinationSellerId)) {
-            throw new IllegalArgumentException("Origin and destination sellers must be different");
-        }
         validateEntity(originSellerId, sellerRepository, SELLER);
         validateEntity(destinationSellerId, sellerRepository, SELLER);
 
@@ -71,7 +64,7 @@ public class OperationValidator {
         }
     }
 
-    private void validateSellerStore(Long sellerId, Long storeId) {
+    public static void validateSellerStore(Long sellerId, Long storeId) {
         if (!storeRepository.existsBySellerAndStoreId(sellerId, storeId)) {
             throw new IllegalArgumentException("Seller does not belong to the store");
         }

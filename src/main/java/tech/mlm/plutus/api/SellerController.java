@@ -1,4 +1,4 @@
-package tech.mlm.plutus.controllers;
+package tech.mlm.plutus.api;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tech.mlm.plutus.dtos.SellerDTO;
 import tech.mlm.plutus.dtos.requests.CreateSellerDTO;
-import tech.mlm.plutus.entities.SellerEntity;
 import tech.mlm.plutus.mappers.SellerMapper;
 import tech.mlm.plutus.services.SellerService;
 

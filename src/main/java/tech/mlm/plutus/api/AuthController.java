@@ -1,4 +1,4 @@
-package tech.mlm.plutus.controllers;
+package tech.mlm.plutus.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

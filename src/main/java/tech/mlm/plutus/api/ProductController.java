@@ -1,4 +1,4 @@
-package tech.mlm.plutus.controllers;
+package tech.mlm.plutus.api;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

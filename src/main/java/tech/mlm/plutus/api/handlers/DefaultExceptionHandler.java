@@ -1,4 +1,4 @@
-package tech.mlm.plutus.controllers.handlers;
+package tech.mlm.plutus.api.handlers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
