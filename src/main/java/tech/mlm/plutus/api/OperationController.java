@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import tech.mlm.plutus.application.useCase.operation.CreateOperationUseCase;
+import tech.mlm.plutus.application.useCase.operation.UpdateOperationUseCase;
 import tech.mlm.plutus.dtos.OperationDTO;
 import tech.mlm.plutus.dtos.requests.CreateOperationRequestDTO;
 import tech.mlm.plutus.dtos.requests.UpdateOperationRequest;
@@ -19,6 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OperationController {
     private final OperationService operationService;
+    private final CreateOperationUseCase createOperation;
+    private final UpdateOperationUseCase updateOperation;
     private final static String ROOT_URL = "/operation";
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -30,13 +34,13 @@ public class OperationController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping(ROOT_URL )
     public ResponseEntity<OperationDTO> createOperation(@RequestBody @Valid CreateOperationRequestDTO operationDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(operationService.createOperationEntity(operationDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(createOperation.execute(operationDTO));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PutMapping(ROOT_URL)
     public ResponseEntity<OperationDTO> updateOperation(@RequestBody @Valid UpdateOperationRequest request) {
-        return ResponseEntity.ok().body(operationService.updateOperation(request));
+        return ResponseEntity.ok().body(updateOperation.execute(request));
     }
 
     @PreAuthorize("isAuthenticated()")

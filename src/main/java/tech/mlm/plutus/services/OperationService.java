@@ -8,7 +8,6 @@ import tech.mlm.plutus.entities.StoreEntity;
 import tech.mlm.plutus.exceptions.OperationNotFoundException;
 import tech.mlm.plutus.mappers.OperationMapper;
 import tech.mlm.plutus.repositories.OperationRepository;
-import tech.mlm.plutus.utils.OperationValidator;
 import tech.mlm.plutus.utils.types.StatusType;
 
 import java.util.List;
@@ -19,10 +18,6 @@ public class OperationService {
 
     private final OperationRepository operationRepository;
     private final OperationMapper mapper;
-    private final ProductService productService;
-    private final SellerService sellerService;
-    private final StoreService storeService;
-    private final OperationValidator operationValidator;
 
 
     public OperationDTO getById(Long operationId) {
@@ -46,5 +41,9 @@ public class OperationService {
 
     public List<OperationDTO> getAllOpenOperationsByStore(StoreEntity storeEntity) {
         return mapper.toDTO(operationRepository.findAllByStoreAndStatus(storeEntity, StatusType.PENDING));
+    }
+
+    public List<OperationDTO> getAllOperationsByStore(StoreEntity storeEntity) {
+        return mapper.toDTO(operationRepository.findAllByStore(storeEntity));
     }
 }

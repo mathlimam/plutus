@@ -41,8 +41,8 @@ public class UserController {
     @GetMapping(ROOT_URL + "/operation")
     public ResponseEntity<?> getAllOperations(){
         UserEntity user = getUserBySecurityContext();
-        List<OperationEntity> operations = operationService.getAllOperationsByStore(user.getStore());
-        return ResponseEntity.ok().body(operationMapper.toDTO(operations));
+        var operations = operationService.getAllOperationsByStore(user.getStore());
+        return ResponseEntity.ok().body(operations);
     }
 
     @PreAuthorize("isAuthenticated()")
